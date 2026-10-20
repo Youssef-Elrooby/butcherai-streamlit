@@ -1,0 +1,4 @@
+forecast_date,holiday_name,expected_demand_kg,demand_change_percent,alert_level,lower_bound,upper_bound
+2026-05-10,Pre Eid Al-Adha,307.63,-25.0,NORMAL,301.39,313.88
+2026-05-17,Pre Eid Al-Adha,421.95,2.87,NORMAL,415.71,428.2
+2026-05-24,Eid Al-Adha,677.32,65.13,HIGH,670.15,684.49
