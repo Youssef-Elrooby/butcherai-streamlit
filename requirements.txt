@@ -1,0 +1,32 @@
+# ButcherAI — Deployment Requirements (Cloud-Optimized)
+# ========================================================
+# Excludes heavy local models (torch/onnx) — uses Gemini Vision for OCR instead
+# This keeps the app under free-tier limits (512MB-1GB RAM)
+
+# ── Core App ─────────────────────────────────────────────────────────────────
+streamlit>=1.35.0
+pandas>=2.0.0
+numpy>=1.24.0
+openpyxl>=3.1.0
+plotly>=5.15.0
+scikit-learn>=1.3.0
+joblib>=1.3.0
+shap>=0.44.0
+hijri-converter>=2.3.0
+google-genai>=1.0.0
+reportlab>=4.0.0
+python-dotenv>=1.0.0
+
+# ── RAG Engine ──────────────────────────────────────────────────────────────
+chromadb>=0.4.24
+sentence-transformers>=2.7.0
+
+# ── LightGBM (forecasting) ──────────────────────────────────────────────────
+lightgbm>=4.0.0
+
+# ── OCR (lightweight — Gemini Vision only, no torch) ────────────────────────
+opencv-python-headless>=4.8.0
+Pillow>=10.0.0
+
+# ── Optional: MCP server ────────────────────────────────────────────────────
+mcp>=1.0.0
