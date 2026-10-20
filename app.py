@@ -444,6 +444,23 @@ def _verify(pw: str, stored: str) -> bool:
         return False
 
 # ─────────────────────────────────────────────────────────────────────────────
+# DB INITIALIZATION  (creates tables on first run — required for cloud deploy)
+# ─────────────────────────────────────────────────────────────────────────────
+def _init_db_if_needed():
+    """Create all tables and seed default data if the database is empty."""
+    try:
+        import db_init
+        res = db_init.init_database(DB)
+        if res.get("error"):
+            print(f"[ButcherAI] DB init error: {res['error']}")
+        else:
+            print(f"[ButcherAI] DB ready: {len(res.get('tables_created', []))} tables")
+    except Exception as exc:
+        print(f"[ButcherAI] DB init failed: {exc}")
+
+_init_db_if_needed()
+
+# ─────────────────────────────────────────────────────────────────────────────
 # DB HELPERS
 # ─────────────────────────────────────────────────────────────────────────────
 def _raw():  return sqlite3.connect(DB, check_same_thread=False)
