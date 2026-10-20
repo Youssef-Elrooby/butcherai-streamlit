@@ -82,7 +82,7 @@ class GeminiEmbeddingFunction:
 
     def _client(self):
         if self._genai is None:
-            import google.generativeai as genai
+            import genai_compat as genai
             genai.configure(api_key=self.api_key)
             self._genai = genai
         return self._genai

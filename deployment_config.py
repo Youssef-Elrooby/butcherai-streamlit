@@ -112,7 +112,7 @@ def get_llm_backend(scenario: Optional[ScenarioConfig] = None) -> Callable:
             import time
             t0 = time.time()
             try:
-                import google.generativeai as genai
+                import genai_compat as genai
                 genai.configure(api_key=api_key or os.environ.get("GEMINI_API_KEY", ""))
                 model_kwargs = {"system_instruction": system} if system else {}
                 model = genai.GenerativeModel("gemini-1.5-flash", **model_kwargs)

@@ -607,7 +607,7 @@ class ButcherAIRAG:
             return question  # No API key — fall back to raw query
 
         try:
-            import google.generativeai as genai
+            import genai_compat as genai
             genai.configure(api_key=api_key)
             model = genai.GenerativeModel("gemini-flash-lite-latest")
 
@@ -987,7 +987,7 @@ def rag_answer(
     answer = ""
     if api_key:
         try:
-            import google.generativeai as genai
+            import genai_compat as genai
             genai.configure(api_key=api_key)
             m    = genai.GenerativeModel(model)
             with track_llm_call(feature="rag_api", model=model, db_path=db_path) as tracker:
@@ -1121,7 +1121,7 @@ def show_rag_page(db_path: str = DB_PATH, gemini_api_key: str = ""):
                 elapsed_gen = 0
                 if api_key:
                     try:
-                        import google.generativeai as genai
+                        import genai_compat as genai
                         genai.configure(api_key=api_key)
                         m    = genai.GenerativeModel("gemini-flash-lite-latest")
                         t1   = time.time()

@@ -852,7 +852,7 @@ def _tool_generate_marketing(
         # Try Gemini for richer content
         if api_key:
             try:
-                import google.generativeai as genai
+                import genai_compat as genai
                 import re
                 genai.configure(api_key=api_key)
                 m = genai.GenerativeModel("gemini-flash-lite-latest")

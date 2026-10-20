@@ -117,7 +117,7 @@ def extract_carcass_weighing_slip(image_bytes: bytes, api_key: str, model_name: 
                 "error": "No Gemini API key provided", "elapsed_sec": 0.0}
 
     try:
-        import google.generativeai as genai
+        import genai_compat as genai
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model_name)
 
@@ -212,7 +212,7 @@ def extract_notebook_lines(image_bytes: bytes, api_key: str, model_name: str = "
         return {"success": False, "lines": [], "error": "No Gemini API key provided", "elapsed_sec": 0.0}
 
     try:
-        import google.generativeai as genai
+        import genai_compat as genai
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(model_name)
 

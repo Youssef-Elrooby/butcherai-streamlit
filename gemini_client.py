@@ -17,7 +17,7 @@ Two call patterns, matching what the new SDK actually recommends:
     workaround used with the old deprecated SDK.
 
 Integration — replace every occurrence of:
-    import google.generativeai as genai
+    import genai_compat as genai
     genai.configure(api_key=api_key)
     model = genai.GenerativeModel(model_name)
     resp = model.generate_content(prompt)

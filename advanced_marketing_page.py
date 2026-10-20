@@ -240,7 +240,7 @@ def generate_advanced_marketing(
         return _template_fallback(product_ar, product_en, category, price, context_season, channels)
 
     try:
-        import google.generativeai as genai
+        import genai_compat as genai
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel("gemini-flash-lite-latest")
 

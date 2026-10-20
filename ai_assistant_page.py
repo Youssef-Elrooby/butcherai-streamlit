@@ -50,7 +50,7 @@ except ImportError:
     HAS_HIJRI = False
 
 try:
-    import google.generativeai as genai
+    import genai_compat as genai
     HAS_GEMINI = True
 except ImportError:
     HAS_GEMINI = False

@@ -63,6 +63,41 @@ try:
 except ImportError:
     AGENT_AVAILABLE = False
 
+# ── Phase 4: Multi-Agent ─────────────────────────────────────────────────────
+try:
+    from phase4_multi_agent import show_multi_agent_page
+    MULTI_AGENT_AVAILABLE = True
+except ImportError:
+    MULTI_AGENT_AVAILABLE = False
+
+# ── Improved Arabic OCR ──────────────────────────────────────────────────────
+try:
+    from arabic_ocr_improved import ArabicOCRProcessor
+    IMPROVED_OCR_AVAILABLE = True
+except ImportError:
+    IMPROVED_OCR_AVAILABLE = False
+
+# ── Monitoring Dashboard ──────────────────────────────────────────────────────
+try:
+    from monitoring_dashboard import show_monitoring_page
+    MONITORING_AVAILABLE = True
+except ImportError:
+    MONITORING_AVAILABLE = False
+
+# ── Price Forecasting ─────────────────────────────────────────────────────────
+try:
+    from price_forecast import show_price_forecast_page
+    PRICE_FORECAST_AVAILABLE = True
+except ImportError:
+    PRICE_FORECAST_AVAILABLE = False
+
+# ── Automation Engine ────────────────────────────────────────────────────────
+try:
+    from automation_engine import show_automation_page
+    AUTOMATION_AVAILABLE = True
+except ImportError:
+    AUTOMATION_AVAILABLE = False
+
 # ── Unified Deployment Scenario (A/B/C/D) ────────────────────────────────────
 try:
     from deployment_config import get_active_scenario, get_llm_backend, get_embed_backend, show_scenario_widget
@@ -109,7 +144,7 @@ except ImportError:
 
 # ── Google Gemini ─────────────────────────────────────────────────────────────
 try:
-    import google.generativeai as genai
+    import genai_compat as genai
     HAS_GEMINI = True
 except ImportError:
     HAS_GEMINI = False
@@ -442,23 +477,6 @@ def _verify(pw: str, stored: str) -> bool:
         return hashlib.pbkdf2_hmac("sha256",pw.encode(),bytes.fromhex(s),260_000).hex()==d
     except Exception:
         return False
-
-# ─────────────────────────────────────────────────────────────────────────────
-# DB INITIALIZATION  (creates tables on first run — required for cloud deploy)
-# ─────────────────────────────────────────────────────────────────────────────
-def _init_db_if_needed():
-    """Create all tables and seed default data if the database is empty."""
-    try:
-        import db_init
-        res = db_init.init_database(DB)
-        if res.get("error"):
-            print(f"[ButcherAI] DB init error: {res['error']}")
-        else:
-            print(f"[ButcherAI] DB ready: {len(res.get('tables_created', []))} tables")
-    except Exception as exc:
-        print(f"[ButcherAI] DB init failed: {exc}")
-
-_init_db_if_needed()
 
 # ─────────────────────────────────────────────────────────────────────────────
 # DB HELPERS
@@ -964,10 +982,14 @@ with st.sidebar:
         "📈 BI Analytics",
         "📅 رصيد المخزون اليومي",
         "🏭 Enterprise Forecast",
+        "💹 توقع الأسعار",
+        "⚙️ محرك الأتمتة",
         "📚 قاعدة المعرفة (RAG)",
         "🤖 وكيل الذكاء الاصطناعي",
+        "👥 الوكلاء المتعددين",
         "🚚 إدارة الموردين",
         "📊 مراقبة الذكاء الاصطناعي",
+        "📊 لوحة المراقبة",
         "🧪 تقييم الجودة",
     ]
     admin_pages = ["💾 النسخ الاحتياطي","📜 سجل التدقيق",
@@ -1662,6 +1684,18 @@ elif page == "📅 رصيد المخزون اليومي":
     st.download_button("⬇️ تحميل CSV",csv_out.to_csv(index=False).encode("utf-8"),
                        file_name="daily_balance_export.csv",mime="text/csv")
 
+elif page == "💹 توقع الأسعار":
+    if not PRICE_FORECAST_AVAILABLE:
+        st.error("❌ توقع الأسعار غير متاح. تأكد من وجود price_forecast.py")
+    else:
+        show_price_forecast_page(db_path=DB)
+
+elif page == "⚙️ محرك الأتمتة":
+    if not AUTOMATION_AVAILABLE:
+        st.error("❌ محرك الأتمتة غير متاح. تأكد من وجود automation_engine.py")
+    else:
+        show_automation_page(db_path=DB)
+
 elif page == "🏭 Enterprise Forecast":
     st.title("🏭 Enterprise Forecast — نظام التنبؤ المؤسسي")
     nc=len(ENT_FEATURES) if ENT_FEATURES else "?"
@@ -1960,9 +1994,27 @@ elif page == "🤖 وكيل الذكاء الاصطناعي":
         )
 
 
+elif page == "👥 الوكلاء المتعددين":
+    if not MULTI_AGENT_AVAILABLE:
+        st.error("❌ الوكلاء المتعددين غير متاح. تأكد من وجود phase4_multi_agent.py")
+    else:
+        show_multi_agent_page(
+            db_path=DB,
+            gemini_api_key=GEMINI_API_ENV,
+            ent_model=ENT_MODEL,
+            ent_features=ENT_FEATURES,
+            get_mult_fn=get_mult,
+        )
+
 elif page == "📊 مراقبة الذكاء الاصطناعي":
     from llm_observability import show_llm_observability_page
     show_llm_observability_page(db_path=DB)
+
+elif page == "📊 لوحة المراقبة":
+    if not MONITORING_AVAILABLE:
+        st.error("❌ لوحة المراقبة غير متاحة. تأكد من وجود monitoring_dashboard.py")
+    else:
+        show_monitoring_page(db_path=DB)
 
 elif page == "🧪 تقييم الجودة":
     from evaluation_harness import show_evaluation_page
