@@ -15,8 +15,48 @@ This lets existing code written for the deprecated SDK keep working:
 
 from __future__ import annotations
 
+import base64
+
 from google import genai as _genai
 from google.genai import types as _types
+
+
+def _convert_contents(contents):
+    """
+    Convert old-SDK style contents (dicts with mime_type/data) into
+    the modern SDK's types.Part objects.
+
+    Old:  {"mime_type": "image/jpeg", "data": "<base64>"}
+    New:  types.Part.from_bytes(data=b"...", mime_type="image/jpeg")
+    """
+    if isinstance(contents, str):
+        return contents
+    if isinstance(contents, dict):
+        contents = [contents]
+    if not isinstance(contents, list):
+        return contents
+
+    parts = []
+    for item in contents:
+        if isinstance(item, str):
+            parts.append(item)
+        elif isinstance(item, dict):
+            mime = item.get("mime_type", "image/jpeg")
+            data = item.get("data", "")
+            if isinstance(data, str):
+                # base64-encoded image data
+                try:
+                    raw = base64.b64decode(data)
+                    parts.append(_types.Part.from_bytes(data=raw, mime_type=mime))
+                except Exception:
+                    parts.append(_types.Part.from_bytes(data=data.encode(), mime_type=mime))
+            elif isinstance(data, bytes):
+                parts.append(_types.Part.from_bytes(data=data, mime_type=mime))
+            else:
+                parts.append(item)
+        else:
+            parts.append(item)
+    return parts
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -59,7 +99,7 @@ class GenerativeModel:
         """Generate content (mirrors model.generate_content)."""
         return self._get_client().models.generate_content(
             model=self.model_name,
-            contents=contents,
+            contents=_convert_contents(contents),
             config=generation_config,
             **kwargs,
         )
