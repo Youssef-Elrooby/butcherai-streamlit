@@ -49,6 +49,9 @@ from datetime import date, timedelta, datetime
 from pathlib import Path
 
 warnings.filterwarnings("ignore")
+# ── DB INITIALIZATION ────────────────────────────────────────────────────────
+import db_init
+db_init.init_database(DB)
 # ── Phase 1: RAG Engine ─────────────────────────────────────────────────────
 try:
     from phase1_rag_engine import get_rag, show_rag_page, rag_answer
