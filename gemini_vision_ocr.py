@@ -521,6 +521,15 @@ def show_gemini_ocr_page(
             },
         )
 
+        # ── Export to Excel ──────────────────────────────────────────────────
+        import io
+        buf = io.BytesIO()
+        edited.drop(columns=["⚠️"], errors="ignore").to_excel(buf, index=False, engine="openpyxl")
+        st.download_button(
+            "⬇️ تحميل Excel", buf.getvalue(), "ocr_output.xlsx",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+
         # Detect a page-level date: if any line has a parseable date, offer it
         # as the default for the whole import, since dates are often written
         # once at the top of a page rather than per transaction line.
