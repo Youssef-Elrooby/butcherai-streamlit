@@ -49,6 +49,7 @@ from datetime import date, timedelta, datetime
 from pathlib import Path
 
 warnings.filterwarnings("ignore")
+DB = os.environ.get("DB_PATH", "ButcherAI.db")
 # ── DB INITIALIZATION ────────────────────────────────────────────────────────
 import db_init
 db_init.init_database(DB)
