@@ -179,6 +179,15 @@ def init_database(db_path: str = "ButcherAI.db") -> dict:
 
         conn.commit()
 
+        # Ensure users table has full_name column
+        try:
+            cols = [r[1] for r in conn.execute("PRAGMA table_info(users)").fetchall()]
+            if "full_name" not in cols:
+                conn.execute("ALTER TABLE users ADD COLUMN full_name TEXT DEFAULT ''")
+                conn.commit()
+        except Exception:
+            pass
+
         # Seed basic products if empty
         count = conn.execute("SELECT COUNT(*) FROM products").fetchone()[0]
         if count == 0:
